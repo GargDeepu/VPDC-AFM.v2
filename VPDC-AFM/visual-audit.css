@@ -1,0 +1,33 @@
+/* Single final visual safety layer: prevents flex/grid collisions and gives phone layouts deliberate hierarchy. */
+*,*::before,*::after{box-sizing:border-box}
+.vpdc-header>*,.vpdc-main>*,.vpdc-case-head>*,.vpdc-option>*,.vpdc-bottom>*{min-width:0}
+.vpdc-brand-logo{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+.vpc-logo,.vpdc-logo{line-height:0;overflow:visible}
+.vpdc-mini{width:110px;flex:0 1 110px}.vpdc-mini .vpdc-brand-logo{max-height:42px}
+.vpdc-question,.vpdc-case-body,.vpdc-option span:last-child,.vpdc-modal h2{overflow-wrap:anywhere;word-break:normal}
+.vpdc-option{min-width:0;align-items:flex-start}
+.vpdc-option span:last-child{min-width:0;white-space:normal}
+.vpdc-case-head{gap:12px;align-items:flex-start}.vpdc-case-head>div{min-width:0}.vpdc-case-head span{white-space:normal;overflow-wrap:anywhere}
+.vpdc-header{grid-template-columns:minmax(0,1fr) minmax(220px,auto) minmax(0,1fr)}
+.vpdc-tools{min-width:0;flex-wrap:wrap}.vpdc-center select{max-width:100%;min-width:0}
+.vpdc-bottom{padding-bottom:max(10px,env(safe-area-inset-bottom))}.vpdc-shell{padding-bottom:110px}
+@media(max-width:900px){
+ body{padding-bottom:116px!important}
+ .vpdc-header{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important;padding:10px!important}
+ .vpdc-title{text-align:center}.vpdc-title .subject{white-space:normal!important;line-height:1.25!important}
+ .vpdc-center{width:100%!important;display:block!important}.vpdc-center select{width:100%!important;height:44px!important}
+ .vpdc-tools{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important;align-items:center!important}.vpdc-mini{display:none!important}
+ .vpdc-lifelines{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.vpdc-life{width:100%!important;min-width:0!important;min-height:52px!important;white-space:normal!important}
+ .vpdc-life-note{display:none!important}.vpdc-main{display:block!important;padding:0 10px!important;margin:12px auto!important}.vpdc-sidebar{position:static!important;width:100%!important;margin-top:12px!important}
+ .vpdc-card,.vpdc-case{border-radius:14px!important}.vpdc-card{padding:14px!important}.vpdc-question{font-size:16px!important;line-height:1.55!important;margin-bottom:16px!important}.vpdc-case-body{font-size:13px!important;line-height:1.6!important}
+ .vpdc-option{min-height:56px!important;padding:12px!important;font-size:13px!important;line-height:1.4!important}.vpdc-option .letter{flex:0 0 26px!important}
+ .vpdc-bottom{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;padding:8px!important}.vpdc-bottom-center{display:contents!important}.vpdc-bottom .vpdc-btn{min-width:0!important;min-height:44px!important;white-space:normal!important;line-height:1.15!important;padding:9px 8px!important}.vpdc-bottom .vpdc-btn.primary{grid-column:span 2!important}
+ .vpdc-palette-grid{grid-template-columns:repeat(auto-fit,minmax(42px,1fr))!important}.vpdc-case-list{grid-template-columns:repeat(auto-fit,minmax(40px,1fr))!important}
+}
+@media(max-width:430px){
+ body{padding-bottom:120px!important}.vpdc-title .kicker{font-size:8px!important}.vpdc-title .subject{font-size:15px!important}.vpdc-tools{font-size:12px!important}.vpdc-score{padding:8px!important}
+ .vpdc-lifelines{gap:6px!important;padding:8px 6px!important}.vpdc-life{min-height:54px!important;font-size:10px!important;padding:6px 3px!important}.vpdc-life .big{font-size:13px!important}
+ .vpdc-main{padding:0 7px!important}.vpdc-card{padding:12px!important}.vpdc-case-head{padding:11px!important}.vpdc-case-head .ghost-btn{min-height:38px!important;white-space:nowrap!important;font-size:10px!important}
+ .vpdc-question{font-size:15px!important}.vpdc-option{font-size:12.5px!important;padding:11px 10px!important}.vpdc-palette-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+}
+@media(max-width:375px){.vpdc-bottom{gap:5px!important}.vpdc-bottom .vpdc-btn{font-size:10px!important}.vpdc-life{font-size:9px!important}.vpdc-life .big{font-size:12px!important}}
