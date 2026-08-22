@@ -19,7 +19,6 @@
   const togglePw = (inputId) => { const el = document.getElementById(inputId); if (el) el.type = el.type === 'password' ? 'text' : 'password'; };
   window.__togglePw = togglePw;
 
-  // ---------- Login ----------
   function showLogin() {
     card(`<p class="login-copy">Log in with your registered email and password to continue your saved progress.</p>
       <form id="login-form">
@@ -44,7 +43,6 @@
   }
   window.showLogin = showLogin;
 
-  // ---------- Sign up ----------
   function showSignup() {
     card(`<p class="login-copy">Create your VPDC student account once. Your progress, answers and activity are saved automatically under your unique student ID.</p>
       <form id="signup-form">
@@ -76,17 +74,17 @@
   window.showSignup = showSignup;
 
   function showSignupOtp() {
-    card(`<p class="login-copy">We sent a 6-digit verification code to <strong>${esc(pendingSignup.email)}</strong>. Enter it below to activate your account.</p>
+    card(`<p class="login-copy">We sent an 8-digit verification code to <strong>${esc(pendingSignup.email)}</strong>. Enter it below to activate your account.</p>
       <form id="otp-form">
-        <label>Email OTP</label><input name="otp" required inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="Enter 6-digit code">
+        <label>Email OTP</label><input name="otp" required inputmode="numeric" autocomplete="one-time-code" maxlength="8" pattern="[0-9]{8}" placeholder="Enter 8-digit code">
         <button class="primary-btn" type="submit"><i class="fa-solid fa-circle-check"></i> Verify &amp; Continue</button>
         <button id="resend-otp" class="auth-back" type="button">Resend code</button>
       </form>
-      <p class="auth-hint">Didn't get an email? Check spam, or use "Resend code". If your inbox only shows a confirmation link instead of a 6-digit code, click that link instead \u2014 it verifies your account the same way.</p>`);
+      <p class="auth-hint">Didn't get an email? Check spam, or use "Resend code".</p>`);
     document.getElementById('otp-form').onsubmit = async (e) => {
       e.preventDefault();
       const token = String(new FormData(e.target).get('otp') || '').trim();
-      if (!/^\d{6}$/.test(token)) { setMsg('Enter the 6-digit code.', true); return; }
+      if (!/^\d{8}$/.test(token)) { setMsg('Enter the 8-digit code.', true); return; }
       setMsg('Verifying\u2026');
       const { data, error } = await client.auth.verifyOtp({ email: pendingSignup.email, token, type: 'signup' });
       if (error) { setMsg(error.message, true); return; }
@@ -102,7 +100,6 @@
     };
   }
 
-  // ---------- Forgot / reset password ----------
   function showForgot() {
     card(`<p class="login-copy">Enter the email you registered with. We'll send you a link to reset your password.</p>
       <form id="forgot-form">
@@ -140,12 +137,10 @@
     };
   }
 
-  // ---------- Boot ----------
   async function afterAuth(user) {
     let { data: student, error } = await client.from('students').select('*').eq('auth_user_id', user.id).maybeSingle();
     if (error) { renderError('Unable to load your student profile', error.message); return; }
     if (!student) {
-      // Existing auth user without a linked student row (e.g. re-verifying) -> relink from metadata.
       const meta = user.user_metadata || {};
       const r = await client.rpc('link_authenticated_student', { p_name: meta.full_name || '', p_phone: '', p_place: '', p_email: user.email });
       if (r.error) { renderError('Unable to set up your student profile', r.error.message); return; }
@@ -179,7 +174,6 @@
     await afterAuth(data.session.user);
   }
 
-  // ---------- Persistence hooks used by app.js ----------
   window.vpdcPersistAnswer = async (a) => {
     if (!S.attempt) return false;
     const { error } = await client.rpc('save_authenticated_answer', {
@@ -207,7 +201,7 @@
     const { error } = await client.rpc('record_answer_event', {
       p_session_id: S.sessionId, p_attempt_id: S.attempt.id, p_question_id: String(q.id), p_question_index: S.i,
       p_event_type: type, p_selected_option: a?.selected_option ?? null, p_is_correct: a?.is_correct ?? null,
-      p_skipped: !!a?.skipped, p_marked_for_review: !!a?.marked_for_review, p_hidden_options: a?.hidden_options || S.hidden[q.id] || [],
+      p_skipped: !!a?.skipped, p_marked: !!a?.marked_for_review, p_hidden_options: a?.hidden_options || S.hidden[q.id] || [],
       p_used_5050: !!a?.used_5050, p_used_expert: !!a?.used_expert, p_used_poll: !!a?.used_poll, p_seconds_spent: Math.floor(a?.seconds_spent || 0)
     });
     if (error) console.error('record_answer_event', error);
@@ -220,7 +214,6 @@
 
   window.vpdcLogout = async () => { await client.auth.signOut(); location.href = redirectTo; };
 
-  // ---------- Recovery link handling ----------
   client.auth.onAuthStateChange((event) => {
     if (event === 'PASSWORD_RECOVERY') showResetPassword();
   });
